@@ -28,10 +28,7 @@ router.get('/', function (req, res) {
 });
 
 router.get('/:version/:options/:str', function (req, res) {
-    const cmd = {
-        svg2ttf: 'node node_modules/svg2ttf/svg2ttf.js',
-        svgicons2svgfont: 'node node_modules/svgicons2svgfont/bin/svgicons2svgfont.js'
-    };
+    const cmd = 'bin/produce.py'
     const str = req.params.str.toString('utf8');
     const arr = [...Array(0xFF + 1).keys()];
 
@@ -62,7 +59,7 @@ router.get('/:version/:options/:str', function (req, res) {
             res.download(ttf, `${md5}.ttf`);
         } else {
             exec(
-                `${cmd.svgicons2svgfont} --fontname=UnicodeBP -o tmp/${md5}.svg ${arg.join(' ')} && ${cmd.svg2ttf} tmp/${md5}.svg ${ttf}`,
+                `${cmd} -o ${ttf} -n UnicodeBP ${arg.join(' ')}`,
                 function(error, stdout, stderr) {
                     if (!error) {
                         res.download(ttf, `${md5}.ttf`);

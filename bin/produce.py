@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from argparse import ArgumentParser;
+import re;
 import os.path;
 import fontforge;
 
@@ -18,21 +19,37 @@ parser.add_argument(
 );
 parser.add_argument(
     '-o',
-    '--output-filename',
+    '--file-path',
     required = True,
     type = str,
-    help = 'TTF output file name without extension',
+    help = 'TTF output file path/name',
     metavar = 'file name'
+);
+parser.add_argument(
+    '-n',
+    '--font-name',
+    type = str,
+    help = 'TTF font name',
+    metavar = 'font name',
+    default = 'JaroshUnicode'
+);
+parser.add_argument(
+    'svg',
+    nargs = '*'
 );
 
 args = parser.parse_args();
-print(args);
 font = fontforge.open('blank.sfd');
 
 for c in args.utf:
     charCode = '%0.4X' % c;
-    fileName = '3/u{}-{}.svg'.format(charCode, charCode);
+    fileName = 'fonts/unifont-12.1.03/u{}-{}.svg'.format(charCode, charCode);
     if os.path.isfile(fileName):
         font.createChar(c).importOutlines(fileName);
 
-font.generate('{}.ttf'.format(args.output_filename));
+for s in args.svg:
+    reg = re.search('.*([A-F0-9]{4,6}).svg$', s);
+    if reg and os.path.isfile(s):
+        font.createChar(int(reg.group(1), 16)).importOutlines(s);
+
+font.generate(args.file_path);
