@@ -9,6 +9,8 @@ const app = express();
 const path = __dirname + '/tmp/';
 const port = 8080;
 
+// http://localhost:8080/v1/ascii;name:UnicodeBP/תיב־ףלארבע
+
 function zerofill(str, len, right) {
     const fill = (str.length < len)
         ? new Array(len - str.length + 1).join('0')
@@ -27,10 +29,26 @@ router.get('/', function (req, res) {
     res.sendFile(`${__dirname}/app.html`);
 });
 
-router.get('/:version/:options/:str', function (req, res) {
-    const cmd = 'bin/produce.py'
+router.get('/:ver/:opt/:str', function (req, res) {
+    const opt = req.params.opt.toString('utf8').split(';').reduce((obj, str) => {
+        const tmp = str.split(':');
+        if (tmp.length <= 2) {
+            obj[tmp[0]] = (tmp.length === 2) ? tmp[1] : true;
+        } else {
+            obj[tmp[0]] = [];
+            for (let i = 1; i < tmp.length; i++) {
+                obj[tmp[0]].push(tmp[i]);
+            }
+        }
+        return obj;
+    }, {});
+    const cmd = 'bin/produce.py';
     const str = req.params.str.toString('utf8');
-    const arr = [...Array(0xFF + 1).keys()];
+    const arr = [...(opt.ascii ? Array(0xFF + 1).keys() : [])];
+
+    if (!opt.name || Array.isArray(opt.name)) {
+        opt.name = 'UnicodeBP';
+    }
 
     for (let i = 0; i < [...str].length; i++) {
         const c = str.codePointAt(i);
@@ -51,7 +69,7 @@ router.get('/:version/:options/:str', function (req, res) {
         .filter((i) => {
             return !!i;
         });
-    const md5 = MD5(arr.join(','));
+    const md5 = MD5(arr.join(',') + '__' + opt.name);
     const ttf = `${__dirname}/tmp/${md5}.ttf`;
 
     try {
@@ -59,7 +77,7 @@ router.get('/:version/:options/:str', function (req, res) {
             res.download(ttf, `${md5}.ttf`);
         } else {
             exec(
-                `${cmd} -o ${ttf} -n UnicodeBP ${arg.join(' ')}`,
+                `${cmd} -o ${ttf} -n ${opt.name} ${arg.join(' ')}`,
                 function(error, stdout, stderr) {
                     if (!error) {
                         res.download(ttf, `${md5}.ttf`);

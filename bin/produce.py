@@ -4,8 +4,7 @@ import re;
 import os.path;
 import fontforge;
 
-# תיב־ףלארבע
-# ./generate.py -u 1514 -u 1497 -u 1489 -u 1470 -u 1507 -u 1500 -u 1488 -u 1512 -u 1489 -u 1506
+# ./produce.py -u 1514 -u 1497 -u 1489 -u 1470 -u 1507 -u 1500 -u 1488 -u 1512 -u 1489 -u 1506
 
 parser = ArgumentParser(description = 'FontForge: from SVG fonts generator');
 parser.add_argument(
@@ -40,6 +39,10 @@ parser.add_argument(
 
 args = parser.parse_args();
 font = fontforge.open('blank.sfd');
+
+font.fontname = args.font_name;
+font.fullname = args.font_name;
+font.familyname = args.font_name;
 
 for c in args.utf:
     charCode = '%0.4X' % c;
