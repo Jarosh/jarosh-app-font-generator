@@ -42,7 +42,11 @@ router.get('/:ver/:opt/:str', function (req, res) {
         }
         return obj;
     }, {});
-    const cmd = 'fontforge -lang=py -script bin/produce.py';
+    const cmd = {
+        produce: 'fontforge -lang=py -script bin/produce.py',
+        svg2ttf: 'node node_modules/svg2ttf/svg2ttf.js',
+        svgicons2svgfont: 'node node_modules/svgicons2svgfont/bin/svgicons2svgfont.js'
+    };
     const str = req.params.str.toString('utf8');
     const arr = [...(opt.ascii ? Array(0xFF + 1).keys() : [])];
 
@@ -71,13 +75,14 @@ router.get('/:ver/:opt/:str', function (req, res) {
         });
     const md5 = MD5(arr.join(',') + '__' + opt.name);
     const ttf = `${__dirname}/tmp/${md5}.ttf`;
+    const svg = `${__dirname}/tmp/${md5}.svg`;
 
     try {
         if (fs.existsSync(ttf)) {
             res.download(ttf, `${md5}.ttf`);
         } else {
             exec(
-                `${cmd} -o ${ttf} -n ${opt.name} ${arg.join(' ')}`,
+                `${cmd.produce} -o ${svg} -n ${opt.name} ${arg.join(' ')} && ${cmd.svg2ttf} ${svg} ${ttf}`,
                 function(error, stdout, stderr) {
                     if (!error) {
                         res.download(ttf, `${md5}.ttf`);

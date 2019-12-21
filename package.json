@@ -12,6 +12,8 @@
     "dependencies": {
         "cors": "^2.8.5",
         "express": "^4.17.1",
-        "md5": "^2.2.1"
+        "md5": "^2.2.1",
+        "svg2ttf": "^4.3.0",
+        "svgicons2svgfont": "^9.1.1"
     }
 }
