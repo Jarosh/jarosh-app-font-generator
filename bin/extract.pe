@@ -1,0 +1,7 @@
+#!/usr/bin/fontforge
+
+Open($1);
+#CIDFlatten();
+Reencode("unicode");
+SelectAll();
+foreach Export("u%U-%U.svg"); endloop;
