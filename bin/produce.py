@@ -71,7 +71,7 @@ def addChar(font, file, code):
         boxBounds = char.boundingBox();
         svgBounds = xml.dom.minidom.parse(s).getElementsByTagName('svg');
         svgBounds = [] if (svgBounds.length is not 1) else map(str2int, svgBounds[0].getAttribute('viewBox').split(' ') or []);
-        char.width = max(boxBounds[2], 0 if (len(svgBounds) is not 4) else (svgBounds[2] - svgBounds[0]));
+        char.width = max(boxBounds[2], 0 if (len(list(svgBounds)) is not 4) else (svgBounds[2] - svgBounds[0]));
         char.autoHint();
         char.autoInstr();
         char.simplify();
