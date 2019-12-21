@@ -42,7 +42,7 @@ router.get('/:ver/:opt/:str', function (req, res) {
         }
         return obj;
     }, {});
-    const cmd = 'bin/produce.py';
+    const cmd = 'fontforge -lang=py -script bin/produce.py';
     const str = req.params.str.toString('utf8');
     const arr = [...(opt.ascii ? Array(0xFF + 1).keys() : [])];
 
