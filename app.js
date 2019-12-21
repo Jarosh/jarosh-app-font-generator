@@ -47,7 +47,7 @@ router.get('/:ver/:opt/:str', function (req, res) {
     const arr = [...(opt.ascii ? Array(0xFF + 1).keys() : [])];
 
     if (!opt.name || Array.isArray(opt.name)) {
-        opt.name = 'UnicodeBP';
+        opt.name = 'JaroshUnicode';
     }
 
     for (let i = 0; i < [...str].length; i++) {
