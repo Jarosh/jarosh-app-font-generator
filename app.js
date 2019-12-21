@@ -82,7 +82,8 @@ router.get('/:ver/:opt/:str', function (req, res) {
             res.download(ttf, `${md5}.ttf`);
         } else {
             exec(
-                `${cmd.produce} -o ${svg} -n ${opt.name} ${arg.join(' ')} && ${cmd.svg2ttf} ${svg} ${ttf}`,
+                `${cmd} -o ${ttf} -n ${opt.name} ${arg.join(' ')}`,
+                //`${cmd.svgicons2svgfont} --fontname=UnicodeBP -o tmp/${md5}.svg ${arg.join(' ')} && ${cmd.svg2ttf} tmp/${md5}.svg ${ttf}`,
                 function(error, stdout, stderr) {
                     if (!error) {
                         res.download(ttf, `${md5}.ttf`);
